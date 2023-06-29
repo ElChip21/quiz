@@ -4,8 +4,7 @@ class Quiz {
   private $titreQuiz;
   private $descriptionQuiz;
 
-  public function __construct($idQuiz, $titreQuiz, $descriptionQuiz) {
-    $this->idQuiz = $idQuiz;
+  public function __construct($titreQuiz, $descriptionQuiz) {
     $this->titreQuiz = $titreQuiz;
     $this->descriptionQuiz = $descriptionQuiz;
   }
