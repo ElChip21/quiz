@@ -25,7 +25,7 @@ class QuestionsController {
           $db = connect();
   
           // Requête pour récupérer tous les abos
-          $QuestionIdQuery=$db->query('SELECT * FROM questions WHERE id_question = :id');
+          $QuestionIdQuery=$db->query('SELECT * FROM questions WHERE id = :id');
   
           // Renvoie tous les lignes
           return $QuestionIdQuery->fetchAll(PDO::FETCH_ASSOC);
@@ -36,7 +36,7 @@ class QuestionsController {
   }
   
 
-  public function addEditQuestion($questionTexte, $questionType, $id) {
+  public function add_edit_question($questionTexte, $questionType) {
     // Code pour créer une nouvelle question dans la base de données ou tout autre moyen
     // et retourner l'objet Question créé
     if (!empty($_POST)) {
@@ -48,7 +48,7 @@ class QuestionsController {
       $db = connect();
   
       // Une catégorie n'a un ID que si ses infos sont déjà enregistrées en BDD, donc on vérifie s'il  la catégorie a un ID.
-      if (empty($_POST['id_question'])) {
+      if (empty($_POST['id'])) {
            // S'il n'y a pas d'ID, la catégorie n'existe pas dans la BDD donc on l'ajoute.
            try {
               // Préparation de la requête d'insertion.
@@ -76,14 +76,14 @@ class QuestionsController {
     // La catégorie existe, on met à jour ses informations
 
     // Récupération de l'ID de la catégorie
-    $id = filter_input(INPUT_POST, 'id_question', FILTER_SANITIZE_NUMBER_INT);
+    $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
     // Mise à jour des informations de la catégorie
     try {
         // Préparation de la requête de mis à jour
-        $updateQuestionStmt = $db->prepare('UPDATE questions SET question_texte=:questionTexte, question_type=:questionType WHERE id_question=:id_question');
+        $updateQuestionStmt = $db->prepare('UPDATE questions SET question_texte=:questionTexte, question_type=:questionType WHERE id=:id');
         // Exécution de la requête
-       $updateQuestionStmt->execute(['question_texte'=>$questionTexte, 'question_type'=>$questionType, 'id_question'=>$id]);
+       $updateQuestionStmt->execute(['question_texte'=>$questionTexte, 'question_type'=>$questionType, 'id'=>$id]);
         // Vérification qu'une ligne a bien été impactée avec rowCount(). Si oui, on estime que la requête a bien été passée, sinon, elle a sûrement échoué.
         if ($updateQuestionStmt->rowCount()) {
             // Une ligne a été mise à jour => message de succès
@@ -126,9 +126,9 @@ $db = null;
             $db = connect();
     
             // Préparation de la requête pour supprimer la catégorie correspondant à l'id
-            $deleteQuestionStmt = $db->prepare('DELETE FROM questions WHERE id_question=:id_question');
+            $deleteQuestionStmt = $db->prepare('DELETE FROM questions WHERE id=:id');
             // Execution de la requête
-            $deleteQuestionStmt->execute(['id_question' => $id]);
+            $deleteQuestionStmt->execute(['id' => $id]);
         
             // Vérification qu'une ligne a été impactée avec rowCount()
             if ($deleteQuestionStmt->rowCount()) {

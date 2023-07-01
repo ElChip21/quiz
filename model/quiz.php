@@ -1,6 +1,6 @@
 <?php
 class Quiz {
-  private $idQuiz;
+  private $id_quiz;
   private $titreQuiz;
   private $descriptionQuiz;
 
@@ -11,7 +11,7 @@ class Quiz {
 
   // Getters
   public function getIdQuiz() {
-    return $this->idQuiz;
+    return $this->id_quiz;
   }
 
   public function getTitreQuiz() {
@@ -23,8 +23,8 @@ class Quiz {
   }
 
   // Setters
-  public function setIdQuiz($idQuiz) {
-    $this->idQuiz = $idQuiz;
+  public function setIdQuiz($id_quiz) {
+    $this->id_quiz = $id_quiz;
   }
 
   public function setTitreQuiz($titreQuiz) {
