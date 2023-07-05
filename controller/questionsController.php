@@ -1,6 +1,6 @@
 <?php
 require_once '../model/questions.php';
-
+require_once '../database/connect.php';
 class QuestionsController {
   public function getAllQuestions() {
       try {
