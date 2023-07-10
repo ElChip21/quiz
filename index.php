@@ -17,8 +17,8 @@ switch ($type) {
     case 'questions':
         // Ajouter ou modifier une question
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_POST['questionId'])) {
-                $questionId = $_POST['questionId'];
+            if (isset($_POST['id'])) {
+                $questionId = $_POST['id'];
 
                 // Vérifier l'action demandée
                 switch ($_POST['action']) {
