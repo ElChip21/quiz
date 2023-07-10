@@ -1,6 +1,6 @@
 <?php
-require_once '../model/questions.php';
-require_once '../database/connect.php';
+require_once 'model/questions.php';
+require_once 'database/connect.php';
 class QuestionsController {
   public function getAllQuestions() {
       try {
@@ -36,80 +36,85 @@ class QuestionsController {
   }
   
 
-  public function add_edit_question($questionTexte, $questionType) {
-    // Code pour créer une nouvelle question dans la base de données ou tout autre moyen
-    // et retourner l'objet Question créé
-    if (!empty($_POST)) {
-      $questionTexte = $_POST['question_texte'] ?? '';
-      $questionType = $_POST['question_type'] ?? '';
-      
   
-      // Connection à la BDD avec la fonction connect() dans functions.php
-      $db = connect();
-  
-      // Une catégorie n'a un ID que si ses infos sont déjà enregistrées en BDD, donc on vérifie s'il  la catégorie a un ID.
-      if (empty($_POST['id'])) {
-           // S'il n'y a pas d'ID, la catégorie n'existe pas dans la BDD donc on l'ajoute.
-           try {
-              // Préparation de la requête d'insertion.
-              $createQuestionStmt = $db->prepare('INSERT INTO questions (question_texte, question_type) VALUES (:question_texte, :question_type)');
-              // Exécution de la requête
-              $createQuestionStmt->execute(['question_texte'=>$questionTexte, 'question_type'=>$questionType]);
-              // Vérification qu'une ligne a bien été impactée avec rowCount(). Si oui, on estime que la requête a bien été passée, sinon, elle a sûrement échoué.
-              if ($createQuestionStmt->rowCount()) {
-                  // Une ligne a été insérée => message de succès
-                  $type = 'success';
-                  $message = 'Question ajouté';
-              } else {
-                  // Aucune ligne n'a été insérée => message d'erreur
-                  $type = 'error';
-                  $message = 'Question non ajouté';
-              }
-          } catch (Exception $e) {
-              // La catégorie n'a pas été ajouté, récupération du message de l'exception
-              $type = 'error';
-              $message = 'Question non ajouté: ' . $e->getMessage();
-          } 
+
+    
+
+
+        public function add_edit_question($questionTexte, $questionType, $action) {
+            // Code pour créer une nouvelle question dans la base de données ou tout autre moyen
+            // et retourner l'objet Question créé
         
- 
-         } else {
-    // La catégorie existe, on met à jour ses informations
-
-    // Récupération de l'ID de la catégorie
-    $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-
-    // Mise à jour des informations de la catégorie
-    try {
-        // Préparation de la requête de mis à jour
-        $updateQuestionStmt = $db->prepare('UPDATE questions SET question_texte=:questionTexte, question_type=:questionType WHERE id=:id');
-        // Exécution de la requête
-       $updateQuestionStmt->execute(['question_texte'=>$questionTexte, 'question_type'=>$questionType, 'id'=>$id]);
-        // Vérification qu'une ligne a bien été impactée avec rowCount(). Si oui, on estime que la requête a bien été passée, sinon, elle a sûrement échoué.
-        if ($updateQuestionStmt->rowCount()) {
-            // Une ligne a été mise à jour => message de succès
-            $type = 'success';
-            $message = 'Question mis à jour';
-        } else {
-            // Aucune ligne n'a été mise à jour => message d'erreur
-            $type = 'error';
-            $message = 'Question non mis à jour';
+            if (!empty($_POST) && $action !== '') {
+                $db = connect();
+        
+                // Vérifier l'action demandée
+                switch ($action) {
+                    case 'add':
+                        // Code pour ajouter une nouvelle question
+                        try {
+                            // Préparation de la requête d'insertion.
+                            $createQuestionStmt = $db->prepare('INSERT INTO questions (question_texte, question_type) VALUES (:question_texte, :question_type)');
+                            // Exécution de la requête
+                            $createQuestionStmt->execute(['question_texte' => $questionTexte, 'question_type' => $questionType]);
+                            // Vérification qu'une ligne a bien été impactée avec rowCount(). Si oui, on estime que la requête a bien été passée, sinon, elle a sûrement échoué.
+                            if ($createQuestionStmt->rowCount()) {
+                                // Une ligne a été insérée => message de succès
+                                $type = 'success';
+                                $message = 'Question ajoutée';
+                            } else {
+                                // Aucune ligne n'a été insérée => message d'erreur
+                                $type = 'error';
+                                $message = 'Question non ajoutée';
+                            }
+                        } catch (Exception $e) {
+                            // La question n'a pas été ajoutée, récupération du message de l'exception
+                            $type = 'error';
+                            $message = 'Question non ajoutée: ' . $e->getMessage();
+                        }
+                        break;
+        
+                    case 'edit':
+                        // Code pour modifier une question existante
+                        if (!empty($_POST['id'])) {
+                            // Récupération de l'ID de la question
+                            $id = $_POST['id'];
+        
+                            try {
+                                // Préparation de la requête de mise à jour
+                                $updateQuestionStmt = $db->prepare('UPDATE questions SET question_texte=:question_texte, question_type=:question_type WHERE id=:id');
+                                // Exécution de la requête
+                                $updateQuestionStmt->execute(['question_texte' => $questionTexte, 'question_type' => $questionType, 'id' => $id]);
+                                // Vérification qu'une ligne a bien été impactée avec rowCount(). Si oui, on estime que la requête a bien été passée, sinon, elle a sûrement échoué.
+                                if ($updateQuestionStmt->rowCount()) {
+                                    // Une ligne a été mise à jour => message de succès
+                                    $type = 'success';
+                                    $message = 'Question mise à jour';
+                                } else {
+                                    // Aucune ligne n'a été mise à jour => message d'erreur
+                                    $type = 'error';
+                                    $message = 'Question non mise à jour';
+                                }
+                            } catch (Exception $e) {
+                                // Une exception a été lancée, récupération du message de l'exception
+                                $type = 'error';
+                                $message = 'Question non mise à jour: ' . $e->getMessage();
+                            }
+                        }
+                        break;
+        
+                    default:
+                        // Action non valide
+                        $type = 'error';
+                        $message = 'Action non valide';
+                        break;
+                }
+                $createQuestionStmt = null;
+                $updateQuestionStmt = null;
+                $db = null;
+            }
         }
-    } catch (Exception $e) {
-        // Une exception a été lancée, récupération du message de l'exception
-        $type = 'error';
-        $message = 'Question non mis à jour: ' . $e->getMessage();
-    }
-    // Fermeture des connexions à la BDD
-$createQuestionStmt = null;
-$updateQuestionStmt = null;
-$db = null;
-}
-    } 
-        }
-
-
-
-
+        
   public function deleteQuestion($id) {
     // Code pour supprimer une question existante de la base de données ou tout autre moyen
 
