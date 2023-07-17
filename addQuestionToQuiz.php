@@ -41,7 +41,7 @@ if (isset($_GET['id'])) {
     <h1 class='col-md-12 text-center border border-dark bg-primary text-white'>Ajout d'une question</h1>
 </div>
 <div class='row'>
-    <form method='post' action='index.php'>
+    <form method='post' action='controller/questionsController.php'>
         <!--  Ajouter the ID to the form if it exists but make the field hidden -->
         <input type='hidden' name='id' value='<?= $questions['id'] ?? '' ?>'>
         <div class='form-group my-3'>
@@ -54,6 +54,10 @@ if (isset($_GET['id'])) {
         </div>
             </select>
         </div>
-        <button type='submit' class='btn btn-primary my-3' name='submit'>Submit</button>
+        <div class='form-group my-3'>
+    <button type='submit' class='btn btn-primary my-3' name='action' value='add'>Ajouter</button>
+    
+</div>
+  
     </form>
 </div>

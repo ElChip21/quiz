@@ -2,7 +2,10 @@
 require_once 'model/questions.php';
 require_once 'database/connect.php';
 class QuestionsController {
-  public function getAllQuestions() {
+  
+  
+  
+    public function getAllQuestions() {
       try {
           // Récupération de l'objet PDO
           $db = connect();

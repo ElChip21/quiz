@@ -1,74 +1,73 @@
-<?php
+
+
+    
+
+    <?php
+
 require_once 'database/connect.php';
 require_once 'model/questions.php';
 require_once 'model/quiz.php';
 require_once 'controller/questionsController.php';
 require_once 'controller/quizController.php';
 
-// On vérifie si la clé 'type' existe dans le tableau $_GET
-$type = isset($_GET['type']) ? $_GET['type'] : '';
+// Get the type of request
+$type = $_GET['type'] ?? '';
 
-// Instancier les contrôleurs
+// Initialize the controllers
 $questionsController = new QuestionsController();
 $quizController = new QuizController();
 
-// Gérer les requêtes en fonction du type demandé
+// Handle the request
 switch ($type) {
     case 'questions':
-        // Ajouter ou modifier une question
+        // Handle questions requests
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_POST['id'])) {
-                $questionId = $_POST['id'];
+            // Check the action
+            switch ($_POST['action']) {
+                case 'add':
+                    // Add a question
+                    $questionText = $_POST['question_texte'] ?? '';
+                    $questionType = $_POST['question_type'] ?? '';
+                    $questionsController->addQuestion($questionText, $questionType);
+                    break;
 
-                // Vérifier l'action demandée
-                switch ($_POST['action']) {
-                    case 'add':
-                        // Récupérer les données du formulaire
-                        $questionTexte = $_POST['question_texte'] ?? '';
-                        $questionType = $_POST['question_type'] ?? '';
+                case 'edit':
+                    // Edit a question
+                    $questionText = $_POST['question_texte'] ?? '';
+                    $questionType = $_POST['question_type'] ?? '';
+                    $questionsController->editQuestion($questionText, $questionType);
+                    break;
 
-                        // Ajouter la question dans la base de données
-                        $questionsController->add_edit_question($questionTexte, $questionType, 'add');
-                        break;
+                case 'delete':
+                    // Delete a question
+                    $id = $_POST['id'];
+                    $questionsController->deleteQuestion($id);
+                    break;
 
-                    case 'edit':
-                        // Récupérer les données du formulaire
-                        $questionTexte = $_POST['question_texte'] ?? '';
-                        $questionType = $_POST['question_type'] ?? '';
-
-                        // Modifier la question dans la base de données
-                        $questionsController->add_edit_question($questionTexte, $questionType, 'edit');
-                        break;
-
-                    case 'delete':
-                        // Supprimer la question de la base de données
-                        $questionsController->deleteQuestion($id);
-                        break;
-
-                    default:
-                        // Action invalide
-                        break;
-                }
-
-                header('Location: index.php?type=questions');
-                exit();
+                default:
+                    // Invalid action
+                    break;
             }
-        }
 
-        // Afficher toutes les questions
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // Redirect to the questions page
+            header('Location: index.php?type=questions');
+            exit();
+        } else {
+            // Get all questions
             $allQuestions = $questionsController->getAllQuestions();
         }
         break;
 
     case 'quiz':
-        // Afficher tous les quiz
+        // Handle quiz requests
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // Get all quizzes
             $allQuizzes = $quizController->getAllQuizzes();
         }
         break;
 
     default:
+        // No matching type
         break;
 }
 ?>
@@ -76,12 +75,11 @@ switch ($type) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mon Application</title>
-  
+    <title>My Application</title>
 </head>
 <body>
     <?php if ($type === 'questions'): ?>
-        <h2>Liste des questions :</h2>
+        <h2>List of questions</h2>
         <table>
             <tr>
                 <th>ID</th>
@@ -90,31 +88,30 @@ switch ($type) {
             </tr>
             <?php foreach ($allQuestions as $question): ?>
                 <tr>
-                    <td><?= $question['id'] ?></td>
-                    <td><?= $question['question_texte'] ?></td>
-                    <td><?= $question['question_type'] ?></td>
+                    <td><?= $question->id ?></td>
+                    <td><?= $question->question_text ?></td>
+                    <td><?= $question->question_type ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>
     <?php endif; ?>
 
     <?php if ($type === 'quiz'): ?>
-        <h2>Liste des quiz :</h2>
+        <h2>List of quizzes</h2>
         <table>
             <tr>
                 <th>ID</th>
-                <th>Titre</th>
+                <th>Title</th>
                 <th>Description</th>
             </tr>
             <?php foreach ($allQuizzes as $quiz): ?>
                 <tr>
-                    <td><?= $quiz['id_quiz'] ?></td>
-                    <td><?= $quiz['titre_quiz'] ?></td>
-                    <td><?= $quiz['description_quiz'] ?></td>
+                    <td><?= $quiz->id_quiz ?></td>
+                    <td><?= $quiz->titre_quiz ?></td>
+                    <td><?= $quiz->description_quiz ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>
     <?php endif; ?>
-
-    
-
+</body>
+</html>
