@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once 'controller/questionsController.php';
-require_once "database/connect.php";
+require_once "/database/connect.php";
 
 $question = getAllQuestions();
 

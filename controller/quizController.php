@@ -1,39 +1,30 @@
-
-
 <?php
-require_once 'model/quiz.php';
 require_once 'database/connect.php';
 
 class QuizController {
     private $db;
 
-    public function setDB($db) {
-        $this->db = $db;
+    public function __construct() {
+        $this->db = new DatabaseConnection();
     }
 
     public function getAllQuizzes() {
         try {
-            // Requête pour récupérer tous les quiz
-            $quizQuery = $this->db->query('SELECT * FROM quiz LIMIT 10');
-    
-            // Renvoie toutes les lignes
+            $pdo = $this->db->getPDO();
+            $quizQuery = $pdo->query('SELECT * FROM quiz LIMIT 10');
             return $quizQuery->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            // En cas d'erreur, lancer une exception pour être gérée plus tard
             throw new Exception('Erreur lors de la récupération des quiz: ' . $e->getMessage());
         }
     }
 
     public function getQuizById($id_quiz) {
         try {
-            // Requête pour récupérer le quiz par son ID
-            $quizIdQuery = $this->db->prepare('SELECT * FROM quiz WHERE id_quiz = :id_quiz');
+            $pdo = $this->db->getPDO();
+            $quizIdQuery = $pdo->prepare('SELECT * FROM quiz WHERE id_quiz = :id_quiz');
             $quizIdQuery->execute(['id_quiz' => $id_quiz]);
-    
-            // Renvoie la première ligne trouvée
             return $quizIdQuery->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            // En cas d'erreur, lancer une exception pour être gérée plus tard
             throw new Exception('Erreur lors de la récupération du quiz: ' . $e->getMessage());
         }
     }
@@ -47,8 +38,9 @@ class QuizController {
             if (empty($_POST['id_quiz'])) {
                 // S'il n'y a pas d'ID, le quiz n'existe pas dans la BDD donc on l'ajoute.
                 try {
+                    $pdo = $this->db->getPDO();
                     // Préparation de la requête d'insertion.
-                    $createQuizStmt = $this->db->prepare('INSERT INTO quiz (titre_quiz, description_quiz) VALUES (:titre_quiz, :description_quiz)');
+                    $createQuizStmt = $pdo->prepare('INSERT INTO quiz (titre_quiz, description_quiz) VALUES (:titre_quiz, :description_quiz)');
                     // Exécution de la requête
                     $createQuizStmt->execute(['titre_quiz' => $titre_quiz, 'description_quiz' => $description_quiz]);
                     // Vérification qu'une ligne a bien été impactée avec rowCount(). Si oui, on estime que la requête a bien été passée, sinon, elle a sûrement échoué.
@@ -73,8 +65,9 @@ class QuizController {
 
                 // Mise à jour des informations du quiz
                 try {
+                    $pdo = $this->db->getPDO();
                     // Préparation de la requête de mise à jour
-                    $updateQuizStmt = $this->db->prepare('UPDATE quiz SET titre_quiz=:titre_quiz, description_quiz=:description_quiz WHERE id_quiz=:id_quiz');
+                    $updateQuizStmt = $pdo->prepare('UPDATE quiz SET titre_quiz=:titre_quiz, description_quiz=:description_quiz WHERE id_quiz=:id_quiz');
                     // Exécution de la requête
                     $updateQuizStmt->execute(['titre_quiz' => $titre_quiz, 'description_quiz' => $description_quiz, 'id_quiz' => $id]);
                     // Vérification qu'une ligne a bien été impactée avec rowCount(). Si oui, on estime que la requête a bien été passée, sinon, elle a sûrement échoué.
@@ -106,8 +99,9 @@ class QuizController {
             $id_quiz = filter_input(INPUT_GET, 'id_quiz', FILTER_SANITIZE_NUMBER_INT);
 
             try {
+                $pdo = $this->db->getPDO();
                 // Préparation de la requête pour supprimer le quiz correspondant à l'id
-                $deleteQuizStmt = $this->db->prepare('DELETE FROM quiz WHERE id_quiz=:id_quiz');
+                $deleteQuizStmt = $pdo->prepare('DELETE FROM quiz WHERE id_quiz=:id_quiz');
                 // Exécution de la requête
                 $deleteQuizStmt->execute(['id_quiz' => $id_quiz]);
 

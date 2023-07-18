@@ -1,24 +1,26 @@
-
 <?php
-// Connection à la base de données et renvoie l'objet PDO
-function connect() {
-    // hôte
-    $hostname = 'localhost';
+class DatabaseConnection {
+    private $hostname = 'localhost';
+    private $dbname = 'quiz';
+    private $username = 'root';
+    private $password = '';
 
-    // nom de la base de données
-    $dbname = 'quiz';
+    private $pdo;
 
-    // identifiant et mot de passe de connexion à la BDD
-    $username = 'root';
-    $password = '';
-    
-    // Création du DSN (data source name) en combinant le type de BDD, l'hôte et le nom de la BDD
-    $dsn = "mysql:host=$hostname;dbname=$dbname";
+    public function __construct() {
+        $dsn = "mysql:host=$this->hostname;dbname=$this->dbname";
 
-    // Tentative de connexion avec levée d'une exception en cas de problème
-    try{
-      return new PDO($dsn, $username, $password);
-    } catch (Exception $e){
-      echo $e->getMessage();
+        // Tentative de connexion avec levée d'une exception en cas de problème
+        try {
+            $this->pdo = new PDO($dsn, $this->username, $this->password);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (Exception $e) {
+            throw new Exception('Erreur de connexion à la base de données : ' . $e->getMessage());
+        }
+    }
+
+    public function getPDO() {
+        return $this->pdo;
     }
 }
+?>
