@@ -1,6 +1,5 @@
 <?php
-require_once 'database/connect.php';
-
+require_once __DIR__ . '/../database/connect.php';
 class QuestionsController {
     private $db;
 

@@ -1,5 +1,5 @@
 <?php
-require_once '../database/connect.php';
+require_once __DIR__ . '/../database/connect.php';
 require_once '../controller/questionsController.php';
 require_once '../model/questions.php';
 
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $question_type = $_POST['question_type'] ?? '';
 
         try {
-            $questionController->addEditQuestion($question_texte, $question_type, 'add');
+            $questionController->add_edit_question($question_texte, $question_type, 'add');
         } catch (Exception $e) {
             // Gérer l'exception si nécessaire
             echo $e->getMessage();
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php require_once 'header.php'; ?>
 <a href='index.php' class='btn btn-secondary m-2 active' role='button'>Accueil</a>
-<a href='../view_questions.php' class='btn btn-secondary m-2 active' role='button'>Questions</a>
+<a href='view_questions.php' class='btn btn-secondary m-2 active' role='button'>Questions</a>
 
 <div class='row'>
     <h1 class='col-md-12 text-center border border-dark bg-primary text-white'>Ajout d'une question</h1>
