@@ -28,14 +28,14 @@ class QuestionsController {
         }
     }
 
-    public function add_edit_question($questionTexte, $questionType, $action) {
+    public function add_edit_question($questionTexte, $questionType) {
         // Code pour ajouter ou mettre à jour une question
-        if (!empty($_POST) && $action !== '') {
+        if (!empty($_POST)) {
             $pdo = $this->db->getPDO();
 
             // Vérifier l'action demandée
-            switch ($action) {
-                case 'add':
+            if (empty($_POST['id'])){ 
+            
                     // Code pour ajouter une nouvelle question
                     try {
                         // Préparation de la requête d'insertion.
@@ -47,6 +47,7 @@ class QuestionsController {
                             // Une ligne a été insérée => message de succès
                             $type = 'success';
                             $message = 'Question ajoutée';
+                            return true;
                         } else {
                             // Aucune ligne n'a été insérée => message d'erreur
                             $type = 'error';
@@ -57,11 +58,11 @@ class QuestionsController {
                         $type = 'error';
                         $message = 'Question non ajoutée: ' . $e->getMessage();
                     }
-                    break;
+                   
 
-                case 'edit':
+            }else{ 
                     // Code pour modifier une question existante
-                    if (!empty($_POST['id'])) {
+                    
                         // Récupération de l'ID de la question
                         $id = $_POST['id'];
 
@@ -74,7 +75,8 @@ class QuestionsController {
                             if ($updateQuestionStmt->rowCount()) {
                                 // Une ligne a été mise à jour => message de succès
                                 $type = 'success';
-                                $message = 'Question mise à jour';
+                                $message = 'Question mise à jour'; 
+                                return true;
                             } else {
                                 // Aucune ligne n'a été mise à jour => message d'erreur
                                 $type = 'error';
@@ -86,16 +88,18 @@ class QuestionsController {
                             $message = 'Question non mise à jour: ' . $e->getMessage();
                         }
                     }
-                    break;
+                    
 
-                default:
-                    // Action non valide
-                    $type = 'error';
-                    $message = 'Action non valide';
-                    break;
+             
+                   
+            }else{ 
+                 // Action non valide
+            
+                 $type = 'error';
+                 $message = 'Les champs ne sont remplis';
             }
         }
-    }
+    
 
     public function deleteQuestion($id) {
         // Code pour supprimer une question existante de la base de données ou tout autre moyen

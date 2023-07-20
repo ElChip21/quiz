@@ -4,9 +4,13 @@ require_once '../controller/quizController.php';
 require_once __DIR__ . '/../database/connect.php';
 
 
-$quizController = new QuizController();
 
+
+
+$quizController = new QuizController();
+$id= (!empty($_GET['id']))?$_GET['id']:0;
 $quiz = $quizController->getAllQuizzes();
+if (!empty($_GET['action']) && ($_GET['action'] === 'delete')) $quizController->deleteQuiz($id_quiz);
 
 ?>
 
@@ -50,9 +54,9 @@ $quiz = $quizController->getAllQuizzes();
            
                 <td>
                    
-                <a class='btn btn-primary' href='controller/quizController.php?id=<?= add_edit_quiz() ?>' role='button'>Modifier</a>
-                <a class='btn btn-primary' href='controller/quizController.php?id=<?=  deleteQuiz() ?>' role='button'>Supprimer</a>
-                   
+                <a class='btn btn-primary' href='addQuiz.php?id=<?= $quizs['id_quiz'] ?>' role='button'>Modifier</a>
+                <a class='btn btn-primary' href='view_quiz.php?id=<?= $quizs['id_quiz'] ?>&action=delete' role='button'>Supprimer</a>
+
                 </td>
             </tr>
         <?php endforeach; ?>

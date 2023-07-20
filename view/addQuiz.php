@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../database/connect.php';
 require_once '../controller/quizController.php';
-require_once '../model/questions.php';
+require_once '../model/quiz.php';
 
 $quizController = new QuizController();
 
@@ -20,29 +20,29 @@ if (isset($_GET['id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action']) && $_POST['action'] === 'add') {
+ 
         $titre_quiz = $_POST['titre_quiz'] ?? '';
         $description_quiz = $_POST['description_quiz'] ?? '';
 
         try {
-            $quizController->add_edit_question($titre_quiz, $description_quiz, 'add');
+            if($quizController->add_edit_question($titre_quiz, $description_quiz)) header('Location:http://localhost/quiz/view/view_quiz.php');
         } catch (Exception $e) {
             // Gérer l'exception si nécessaire
             echo $e->getMessage();
         }
     }
-}
+
 ?>
 
 <?php require_once 'header.php'; ?>
-<a href='index.php' class='btn btn-secondary m-2 active' role='button'>Accueil</a>
-<a href='view/view_quiz.php' class='btn btn-secondary m-2 active' role='button'>Quizs</a>
+<a href='../index.php' class='btn btn-secondary m-2 active' role='button'>Accueil</a>
+<a href='view_quiz.php' class='btn btn-secondary m-2 active' role='button'>Quizs</a>
 
 <div class='row'>
     <h1 class='col-md-12 text-center border border-dark bg-primary text-white'>Ajout d'un quiz</h1>
 </div>
 <div class='row'>
-    <form method='post' action='addQuiz.php'>
+    <form method='post' action=''>
         <!-- Ajouter l'ID à formulaire s'il existe, mais le champ doit rester caché -->
         <input type='hidden' name='id' value='<?= $question['id'] ?? '' ?>'>
         <div class='form-group my-3'>
@@ -54,7 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type='text' name='description_quiz' class='form-control' id='description_quiz' placeholder='Description de votre quiz :' required value='<?= isset($quiz['description_quiz']) ? htmlentities($quiz['description_quiz'])  : '' ?>'>
         </div>
         <div class='form-group my-3'>
-            <button type='submit' class='btn btn-primary my-3' name='action' value='add'>Ajouter</button>
+            <?php if($_GET['id']!=''){?><button type='submit' class='btn btn-primary my-3' name='action' value='add'>Modifier</button>
         </div>
+        <?php }else{ ?>
+            <div class='form-group my-3'>
+            <button type='submit' class='btn btn-primary my-3' name='action' value='add'>Ajouter</button>
+        </div> <?php } ?>
+   
+
     </form>
 </div>

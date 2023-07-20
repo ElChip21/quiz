@@ -12,6 +12,8 @@ $type = $_GET['type'] ?? '';
 
 $questionsController = new QuestionsController();
 $quizController = new QuizController();
+$allQuestions = $questionsController->getAllQuestions();
+$allQuizzes = $quizController->getAllQuizzes();
 
 
 switch ($type) {
@@ -21,17 +23,17 @@ switch ($type) {
          
             switch ($_POST['action']) {
                 case 'add':
-                 
+                    $id = $_POST['id'];
                     $questionText = $_POST['question_texte'] ?? '';
                     $questionType = $_POST['question_type'] ?? '';
-                    $questionsController->addQuestion($questionText, $questionType);
+                    $questionsController->add_edit_question($questionTexte, $questionType, 'add');
                     break;
 
                 case 'edit':
-                    
+                    $id = $_POST['id'];
                     $questionText = $_POST['question_texte'] ?? '';
                     $questionType = $_POST['question_type'] ?? '';
-                    $questionsController->editQuestion($questionText, $questionType);
+                    $questionsController->add_edit_question($questionTexte, $questionType, $action);
                     break;
 
                 case 'delete':
@@ -46,7 +48,7 @@ switch ($type) {
             }
 
          
-            header('Location: index.php?type=questions');
+        
             exit();
         } else {
            
@@ -60,6 +62,38 @@ switch ($type) {
           
             $allQuizzes = $quizController->getAllQuizzes();
         }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+         
+            switch ($_POST['action']) {
+                case 'add':
+                 
+                    $titre_quiz = $_POST['titre_quiz'] ?? '';
+                    $description_quiz = $_POST['description_quiz'] ?? '';
+                    $quizController->add_edit_question($titre_quiz, $description_quiz, 'add');
+                    break;
+
+                case 'edit':
+                    
+                    $titre_quiz = $_POST['titre_quiz'] ?? '';
+                    $description_quiz = $_POST['description_quiz'] ?? '';
+                    $quizController->add_edit_question($titre_quiz, $description_quiz, 'edit');
+                    break;
+
+                case 'delete':
+                 
+                    $id = $_POST['id_quiz'];
+                    $questionsController->deleteQuestion($id);
+                    break;
+
+                default:
+                    
+                    break;
+            }
+
+         
+        
+            exit();
+        }
         break;
 
     default:
@@ -67,31 +101,37 @@ switch ($type) {
         break;
 }
 ?>
-
+<?php require_once 'view/header.php'; ?> 
 <!DOCTYPE html>
 <html>
 
 <body>
-    <?php if ($type === 'questions'): ?>
-        <h2>List des questions</h2>
+  
+        <h2>List des questions</h2>        
+        <h2> <a class='btn btn-primary' href='view/addQuestionToQuiz.php' role='button'>Ajouter une question</a> </h2>
+
         <table>
             <tr>
+            
                 <th>ID</th>
                 <th>Question</th>
                 <th>Type</th>
             </tr>
             <?php foreach ($allQuestions as $question): ?>
                 <tr>
-                    <td><?= $question->id ?></td>
-                    <td><?= $question->question_text ?></td>
-                    <td><?= $question->question_type ?></td>
+         <td><?= $question['id'] ?></td>
+         <td><?= htmlentities($question['question_texte']) ?></td>
+         <td><?= htmlentities($question['question_type']) ?></td>
+
                 </tr>
             <?php endforeach; ?>
         </table>
-    <?php endif; ?>
+   
 
-    <?php if ($type === 'quiz'): ?>
+    
         <h2>Liste de tous les quizs!</h2>
+        <h2> <a class='btn btn-primary' href='view/addQuiz.php' role='button'>Ajouter un Quiz</a> </h2>
+
         <table>
             <tr>
                 <th>ID</th>
@@ -100,12 +140,12 @@ switch ($type) {
             </tr>
             <?php foreach ($allQuizzes as $quiz): ?>
                 <tr>
-                    <td><?= $quiz->id_quiz ?></td>
-                    <td><?= $quiz->titre_quiz ?></td>
-                    <td><?= $quiz->description_quiz ?></td>
+                <td><?= $quiz['id_quiz'] ?></td>
+         <td><?= htmlentities($quiz['titre_quiz']) ?></td>
+         <td><?= htmlentities($quiz['description_quiz']) ?></td>
+                  
                 </tr>
             <?php endforeach; ?>
         </table>
-    <?php endif; ?>
 </body>
 </html>

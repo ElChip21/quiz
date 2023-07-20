@@ -31,14 +31,15 @@ class QuizController {
 
    
 
-    public function add_edit_question($titre_quiz, $description_quiz, $action) {
+    public function add_edit_question($titre_quiz, $description_quiz) {
         // Code pour ajouter ou mettre à jour une question
-        if (!empty($_POST) && $action !== '') {
+        if (!empty($_POST)) {
             $pdo = $this->db->getPDO();
 
             // Vérifier l'action demandée
-            switch ($action) {
-                case 'add':
+            if (empty($_POST['id'])){ 
+            // Vérifier l'action demandée
+           
                     // Code pour ajouter un nouveau quiz
                     try {
                         // Préparation de la requête d'insertion.
@@ -60,13 +61,13 @@ class QuizController {
                         $type = 'error';
                         $message = 'Quiz non ajoutée: ' . $e->getMessage();
                     }
-                    break;
+                    
 
-                case 'edit':
+                }else{ 
                     // Code pour modifier une question existante
-                    if (!empty($_POST['id'])) {
+                    
                         // Récupération de l'ID de la question
-                        $id = $_POST['id'];
+                        $id = $_POST['id_quiz'];
 
                         try {
                             // Préparation de la requête de mise à jour
@@ -89,16 +90,16 @@ class QuizController {
                             $message = 'Quiz non mise à jour: ' . $e->getMessage();
                         }
                     }
-                    break;
-
-                default:
+                   
+                }else{
+                
                     // Action non valide
                     $type = 'error';
                     $message = 'Action non valide';
-                    break;
+                  
             }
         }
-    }
+    
 
 
     public function deleteQuiz($id_quiz) {

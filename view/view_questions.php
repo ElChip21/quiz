@@ -7,9 +7,12 @@ require_once __DIR__ . '/../database/connect.php';
 
 
 $questionsController = new QuestionsController();
-
+$id= (!empty($_GET['id']))?$_GET['id']:0;
 $question = $questionsController->getAllQuestions();
-$delete = $questionsController->deleteQuestion($id);
+if (!empty($_GET['action']) && ($_GET['action'] === 'delete')) $questionsController->deleteQuestion($id);
+
+
+
 ?>
 
 <?php require_once 'header.php' ?>
@@ -54,7 +57,7 @@ $delete = $questionsController->deleteQuestion($id);
                 <td>
                 <a class='btn btn-primary' href='addQuestionToQuiz.php?id=<?= $questions['id'] ?>' role='button'>Modifier</a>
                
-                <a class='btn btn-primary' href='view_questions.php?id=<?= $delete ?>' role='button'>Supprimer</a>
+                <a class='btn btn-primary' href='view_questions.php?id=<?= $questions['id'] ?>&action=delete' role='button'>Supprimer</a>
                    
                 </td>
             </tr>

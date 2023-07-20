@@ -20,18 +20,17 @@ if (isset($_GET['id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action']) && $_POST['action'] === 'add') {
         $question_texte = $_POST['question_texte'] ?? '';
         $question_type = $_POST['question_type'] ?? '';
 
         try {
-            $questionController->add_edit_question($question_texte, $question_type, 'add');
+           if($questionController->add_edit_question($question_texte, $question_type)) header('Location:http://localhost/quiz/view/view_questions.php');
         } catch (Exception $e) {
             // Gérer l'exception si nécessaire
             echo $e->getMessage();
         }
     }
-}
+
 ?>
 
 <?php require_once 'header.php'; ?>
@@ -42,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1 class='col-md-12 text-center border border-dark bg-primary text-white'>Ajout d'une question</h1>
 </div>
 <div class='row'>
-    <form method='post' action='addQuestionToQuiz.php'>
+    <form method='post' action=''>
         <!-- Ajouter l'ID à formulaire s'il existe, mais le champ doit rester caché -->
         <input type='hidden' name='id' value='<?= $question['id'] ?? '' ?>'>
         <div class='form-group my-3'>
@@ -54,7 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type='text' name='question_type' class='form-control' id='question_type' placeholder='Type de la question' required value='<?= isset($question['question_type']) ? htmlentities($question['question_type'])  : '' ?>'>
         </div>
         <div class='form-group my-3'>
-            <button type='submit' class='btn btn-primary my-3' name='action' value='add'>Ajouter</button>
+            <?php if($_GET['id']!=''){?><button type='submit' class='btn btn-primary my-3' name='action' value='add'>Modifier</button>
         </div>
+        <?php }else{ ?>
+            <div class='form-group my-3'>
+            <button type='submit' class='btn btn-primary my-3' name='action' value='add'>Ajouter</button>
+        </div> <?php } ?>
     </form>
 </div>

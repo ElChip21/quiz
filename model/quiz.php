@@ -1,12 +1,12 @@
 <?php
 class Quiz {
   private $id_quiz;
-  private $titreQuiz;
-  private $descriptionQuiz;
+  private $titre_quiz;
+  private $description_quiz;
 
-  public function __construct($titreQuiz, $descriptionQuiz) {
-    $this->titreQuiz = $titreQuiz;
-    $this->descriptionQuiz = $descriptionQuiz;
+  public function __construct($titre_quiz, $description_quiz) {
+    $this->titre_quiz = $titre_quiz;
+    $this->description_quiz = $description_quiz;
   }
 
   // Getters
@@ -15,11 +15,11 @@ class Quiz {
   }
 
   public function getTitreQuiz() {
-    return $this->titreQuiz;
+    return $this->titre_quiz;
   }
 
   public function getDescriptionQuiz() {
-    return $this->descriptionQuiz;
+    return $this->description_quiz;
   }
 
   // Setters
@@ -27,12 +27,12 @@ class Quiz {
     $this->id_quiz = $id_quiz;
   }
 
-  public function setTitreQuiz($titreQuiz) {
-    $this->titreQuiz = $titreQuiz;
+  public function setTitreQuiz($titre_quiz) {
+    $this->titre_quiz = $titre_quiz;
   }
 
-  public function setDescriptionQuiz($descriptionQuiz) {
-    $this->descriptionQuiz = $descriptionQuiz;
+  public function setDescriptionQuiz($description_quiz) {
+    $this->description_quiz = $description_quiz;
   }
 }
 ?>
